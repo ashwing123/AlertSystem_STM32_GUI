@@ -5,4 +5,4 @@ Here are a few screenshots of the GUI which enable users to control and sync up 
 
 <img src = "piezo.png" alt="piezo screen" width = "200"/> <img src="alerts.png" alt ="alert configurations page" width="200"/>
 
-![Demo Video](https://youtu.be/vftSMCJ7OoM)
+Click here for demo: https://youtu.be/vftSMCJ7OoM
