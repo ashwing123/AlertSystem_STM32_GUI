@@ -1,0 +1,556 @@
+#:import Gradient kivy_gradient.Gradient
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+
+WindowManager:
+    HomeWindow:
+    LEDWindow:
+    PiezoWindow:
+    SettingsWindow:
+
+<Button>
+    background_normal: ''
+    background_color: (70/255, 70/255, 70/255, 1)
+    font_size: 20
+
+<HoverButton>
+    background_normal: ''
+    background_color: (0, 0, 0, 0)
+    canvas.before:
+        Color:
+            rgba: self.background
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [20]
+
+<HoverButtonSmall>
+    background_normal: ''
+    background_color: (0, 0, 0, 0)
+    canvas.before:
+        Color:
+            rgba: self.background
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [7]
+
+<MyOption@SpinnerOption>:
+    font_size: 11
+
+<MyOptionSmall@SpinnerOption>:
+    font_size: 10
+
+<HomeWindow>:
+    name: "home"
+    canvas.before:
+        Rectangle:
+            size: root.width, root.height
+            texture: Gradient.vertical(get_color_from_hex("e9f5f9"), get_color_from_hex("66b6d2"))
+    Label:
+        text: "Alerts Dashboard"
+        font_name: "fonts/Nexa Light.otf"
+        font_size: 27
+        pos: -30, 270
+        Image:
+            source: 'imgs/danger.png'
+            size: 35, 35
+            pos: 280, 570
+    FloatLayout:
+        size: root.width, root.height
+        background_normal: ''
+        BoxLayout:
+            orientation: "horizontal"
+            size: root.width * 2/3, root.height * 2/3
+            pos: 0, root.height - 280
+            padding: 27.5
+            spacing: 20
+            HoverButton:
+                size_hint: (None, None)
+                height: 175
+                width: 150
+                on_release: 
+                    root.manager.transition.direction = 'left'
+                    app.root.current = "ledWnd"
+                Label:
+                    font_name: "fonts/Helvetica.ttf"
+                    text: "LED Settings"
+                    y: self.parent.y - 20
+                    x: self.parent.x + 25
+                Image: 
+                    source: 'imgs/led.png'
+                    y: self.parent.y + 40
+                    x: self.parent.x + 13
+                    size: 125, 125
+
+            HoverButton:
+                height: 175
+                width: 150
+                size_hint: (None, None)
+                on_release: 
+                    root.manager.transition.direction = 'left'
+                    app.root.current = "PiezoWnd"
+                Label:
+                    font_name: "fonts/Helvetica.ttf"
+                    text: "Piezo Settings"
+                    y: self.parent.y - 20
+                    x: self.parent.x + 25
+                Image:
+                    source: 'imgs/loud-speaker.png'
+                    y: self.parent.y + 44
+                    x: self.parent.x + 20
+                    size: 115, 115
+        BoxLayout:
+            orientation: "horizontal"
+            size: root.width * 2/3, root.height * 2/3
+            pos: 0, root.height - 500
+            padding: 27.5
+            spacing: 20
+            HoverButton:
+                height: 175
+                width: 150
+                size_hint: (None, None)
+                on_press: root.press_LRA()
+                Label:
+                    font_name: "fonts/Helvetica.ttf"
+                    text: "Vibration Settings"
+                    y: self.parent.y - 20
+                    x: self.parent.x + 25
+                Image:
+                    source: 'imgs/tuning.png'
+                    y: self.parent.y + 50
+                    x: self.parent.x + 25
+                    size: 100, 100
+
+            HoverButton:
+                height: 175
+                width: 150
+                size_hint: (None, None)
+                on_press: 
+                    root.manager.transition.direction = 'left'
+                    app.root.current = "SettingsWnd"
+                Label:
+                    font_name: "fonts/Helvetica.ttf"
+                    text: "Alarm Settings"
+                    y: self.parent.y - 20
+                    x: self.parent.x + 25
+                Image:
+                    source: 'imgs/alert.png'
+                    y: self.parent.y + 40
+                    x: self.parent.x + 20
+                    size: 115, 115
+<LEDWindow>:
+    name: "ledWnd"
+    canvas.before:
+        Rectangle:
+            size: root.width, root.height
+            texture: Gradient.vertical(get_color_from_hex("e9f5f9"), get_color_from_hex("66b6d2"))
+    MDScreen:
+        MDLabel:
+            color: "white"
+            text: "LED Configuration"
+            font_name: "fonts/Nexa Light.otf"
+            font_size: 25
+            y: 270
+            x: 30
+            Image:
+                source: 'imgs/led.png'
+                size: 35, 35
+                pos: 242, 570
+        FloatLayout:
+            pos: 0, 0
+            size: root.width, root.height
+            HoverButtonSmall:
+                text: "Back To Home"
+                pos_hint: {'x': 0.75, 'y': 0.9}
+                font_size: 12
+                size_hint: None, None
+                size: 85, 35
+                on_release:
+                    root.manager.transition.direction = 'right'
+                    app.root.current = "home"
+            Label:
+                color: "red"
+                text: "Red"
+                pos_hint: {'x': -0.05, 'y': 0.75}
+                size_hint: None, None
+                font_size: 12
+                font_name: "fonts/Nexa Light.otf"
+            Spinner:
+                id: led_spinner_r
+                text: "LED modes"
+                pos_hint: {'x': 0.13, 'y': 0.8}
+                size_hint: None, None
+                size: 90, 32
+                font_size: 12
+                option_cls: "MyOption"
+                values: ["Breathe Up", "Breathe Down", "Breathe Regular", "Flash", "Solid"]
+                on_text: root.red_spinner_clicked(led_spinner_r.text)
+            TextInput:
+                id: redDuration
+                pos_hint: {'x': 0.39, 'y': 0.8}
+                hint_text: "duration"
+                size_hint: None, None
+                size: 57, 32
+                font_size: 12
+            TextInput:
+                id: redRepeats
+                pos_hint: {'x': 0.56, 'y': 0.8}
+                hint_text: "# repeats"
+                size_hint: None, None
+                size: 65, 32
+                font_size: 12
+            HoverButtonSmall:
+                pos_hint: {'x': 0.75, 'y': 0.8}
+                text: "Start LED"
+                font_size: 12
+                size_hint: None, None
+                size: 70, 32
+                on_release: root.red_button_pressed()
+            
+            Label:
+                color: "green"
+                text: "Green"
+                pos_hint: {'x': -0.05, 'y': 0.6}
+                size_hint: None, None
+                font_size: 12
+                font_name: "fonts/Nexa Light.otf"
+            Spinner:
+                id: led_spinner_g
+                text: "LED modes"
+                pos_hint: {'x': 0.13, 'y': 0.65}
+                size_hint: None, None
+                size: 90, 32
+                font_size: 12
+                option_cls: "MyOption"
+                values: ["Breathe Up", "Breathe Down", "Breathe Regular", "Flash", "Solid"]
+                on_text: root.green_spinner_clicked(led_spinner_g.text)
+            TextInput:
+                id: greenDuration
+                pos_hint: {'x': 0.39, 'y': 0.65}
+                hint_text: "duration"
+                size_hint: None, None
+                size: 57, 32
+                font_size: 12
+            TextInput:
+                id: greenRepeats
+                pos_hint: {'x': 0.56, 'y': 0.65}
+                hint_text: "# repeats"
+                size_hint: None, None
+                size: 65, 32
+                font_size: 12
+            HoverButtonSmall:
+                pos_hint: {'x': 0.75, 'y': 0.65}
+                text: "Start LED"
+                font_size: 12
+                size_hint: None, None
+                size: 70, 32
+                on_release: root.green_button_pressed()
+            
+            Label:
+                color: "blue"
+                text: "Blue"
+                pos_hint: {'x': -0.05, 'y': 0.45}
+                size_hint: None, None
+                font_size: 12
+                font_name: "fonts/Nexa Light.otf"
+            Spinner:
+                id: led_spinner_b
+                text: "LED modes"
+                pos_hint: {'x': 0.13, 'y': 0.5}
+                size_hint: None, None
+                size: 90, 32
+                font_size: 12
+                option_cls: "MyOption"
+                values: ["Breathe Up", "Breathe Down", "Breathe Regular", "Flash", "Solid"]
+                on_text: root.blue_spinner_clicked(led_spinner_b.text)
+            TextInput:
+                id: blueDuration
+                pos_hint: {'x': 0.39, 'y': 0.5}
+                hint_text: "duration"
+                size_hint: None, None
+                size: 57, 32
+                font_size: 12
+            TextInput:
+                id: blueRepeats
+                pos_hint: {'x': 0.56, 'y': 0.5}
+                hint_text: "# repeats"
+                size_hint: None, None
+                size: 65, 32
+                font_size: 12
+            HoverButtonSmall:
+                pos_hint: {'x': 0.75, 'y': 0.5}
+                text: "Start LED"
+                font_size: 12
+                size_hint: None, None
+                size: 70, 32
+                on_release: root.blue_button_pressed()
+
+            Label:
+                color: "orange"
+                text: "Pairing"
+                pos_hint: {'x': -0.05, 'y': 0.3}
+                size_hint: None, None
+                font_size: 12
+                font_name: "fonts/Nexa Light.otf"
+            TextInput:
+                id: binary_blinks
+                pos_hint: {'x': 0.15, 'y': 0.35}
+                hint_text: "binary code"
+                size_hint: None, None
+                size: 150, 32
+                font_size: 12
+            TextInput:
+                id: blinks_ps
+                pos_hint: {'x': 0.58, 'y': 0.35}
+                hint_text: "bps"
+                size_hint: None, None
+                size: 70, 32
+                font_size: 12
+            HoverButtonSmall:
+                pos_hint: {'x': 0.8, 'y': 0.35}
+                text: "Send"
+                font_size: 12
+                size_hint: None, None
+                size: 50, 32
+                on_release: root.byte_send()
+            
+    
+        
+
+<PiezoWindow>:
+    name: "PiezoWnd"
+    canvas.before:
+        Rectangle:
+            size: root.width, root.height
+            texture: Gradient.vertical(get_color_from_hex("e9f5f9"), get_color_from_hex("66b6d2"))
+    MDScreen:
+        MDLabel:
+            text: "Piezo Configurations"
+            color: "white"
+            font_name: "fonts/Nexa Light.otf"
+            font_size: 27
+            y: 270
+            x: 30
+            Image:
+                source: 'imgs/loud-speaker.png'
+                size: 35, 35
+                pos: 295, 575
+            MDFloatingActionButtonSpeedDial:
+                pos: 10, 30
+                data: app.data_piezo
+                root_button_anim: True
+                callback: app.nav_callback
+        FloatLayout:
+            pos: 0, 0
+            size: root.width, root.height
+            Spinner:
+                id: piezo_spinner
+                text: "Piezo Alerts"
+                pos_hint: {'x': 0.07, 'y': 0.8}
+                size_hint: None, None
+                size: 90, 32
+                font_size: 12
+                option_cls: "MyOption"
+                values: ["Siren", "Alarm1", "Alarm2", "Ascending", "Descending", "Chime Neutral", "Chime Negative", "Chime Positive", "Chime Notify", "Battery Chime"]
+                on_text: root.piezo_spinner_clicked(piezo_spinner.text)
+            TextInput:
+                id: piezoRepeats
+                pos_hint: {'x': 0.37, 'y': 0.8}
+                hint_text: "# repeats"
+                size_hint: None, None
+                size: 110, 32
+                font_size: 13
+            HoverButtonSmall:
+                pos_hint: {'x': 0.72, 'y': 0.8}
+                text: "Play Piezo"
+                font_size: 13
+                size_hint: None, None
+                size: 80, 32
+                on_release: root.piezo_button_pressed()
+            Label:
+                text: "Tune Playback"
+                color: "white"
+                font_name: "fonts/Nexa Light.otf"
+                size_hint: None, None
+                font_size: 13
+                pos_hint: {'x': 0.06, 'y': 0.65}
+            TextInput:
+                id: beats_per_min
+                pos_hint: {'x': 0.37, 'y': 0.7}
+                hint_text: "Beats Per Minute"
+                size_hint: None, None
+                size: 110, 32
+                font_size: 12
+            HoverButtonSmall:
+                pos_hint: {'x': 0.72, 'y': 0.7}
+                text: "Play Tune"
+                font_size: 13
+                size_hint: None, None
+                size: 80, 32
+                on_release: root.tune_button_pressed()
+            TextInput:
+                id: noteInput
+                pos_hint: {'x': 0.07, 'y': 0.57}
+                hint_text: "Enter your Notes Here"
+                size_hint: None, None
+                size: 150, 64
+                font_size: 12
+            TextInput:
+                id: beatInput
+                pos_hint: {'x': 0.53, 'y': 0.57}
+                hint_text: "Enter the Beats Here"
+                size_hint: None, None
+                size: 150, 64
+                font_size: 12
+
+<SettingsWindow>:
+    name: "SettingsWnd"
+    canvas.before:
+        Rectangle:
+            size: root.width, root.height
+            texture: Gradient.vertical(get_color_from_hex("e9f5f9"), get_color_from_hex("66b6d2"))
+    ScrollView:
+        size: root.width, root.height
+        bar_color: get_color_from_hex("c2a3ff")
+        bar_width: 8
+        FloatLayout:
+            id: stgs_float_layout
+            size_hint: None, None
+            size: root.width, root.height*2
+            Label:
+                text: "Alert Settings"
+                color: "white"
+                font_name: "fonts/Nexa Light.otf"
+                font_size: 27
+                pos_hint: {'x': 0.15, 'y': 0.92}
+                size_hint: None, None
+            Image:
+                source: 'imgs/alert.png'
+                pos_hint: {'x': 0.55, 'y': 0.95}
+                size_hint: None, None
+                size: 35, 35
+            HoverButtonSmall:
+                text: "Back To Home"
+                pos_hint: {'x': 0.75, 'y': 0.945}
+                font_size: 12
+                size_hint: None, None
+                size: 85, 35
+                on_release:
+                    root.manager.transition.direction = 'right'
+                    app.root.current = "home"
+            Label:
+                text: "Piezo Config"
+                color: "white"
+                font_name: "fonts/Nexa Light.otf"
+                font_size: 20
+                pos_hint: {'x': 0.1, 'y': 0.88}
+                size_hint: None, None
+            Image:
+                source: 'imgs/buzzer.png'
+                pos_hint: {'x': 0.42, 'y': 0.91}
+                size_hint: None, None
+                size: 30, 30
+            Spinner:
+                id: piezo_alert_type
+                text: "Alert Type"
+                pos_hint: {'x': 0.05, 'y': 0.87}
+                size_hint: None, None
+                size: 160, 32
+                font_size: 12
+                option_cls: "MyOption"
+                values: ["Low Glucose", "High Glucose", "Loss of Therapy Protections", "No SG", "Manual Suspend", "Occlusion", "Low insuling Reservoir", "Over-infusion", "Lost Controller", "Low Pump Battery", "Depleted Battery", "Critical Pump Error", "Simple Pump Notification", "Charging", "Pairing"]
+                on_text: root.alert_type_p_clicked(piezo_alert_type.text)
+            Spinner:
+                id: piezo_choice
+                text: "Piezo Mode"
+                pos_hint: {'x': 0.5, 'y': 0.87}
+                size_hint: None, None
+                size: 90, 32
+                font_size: 12
+                option_cls: "MyOption"
+                values: ["Siren", "Alarm1", "Alarm2", "Ascending", "Descending", "Chime Neutral", "Chime Negative", "Chime Positive", "Chime Notify", "Battery Chime"]
+                on_text: root.pzo_spin_clicked(piezo_choice.text)
+            HoverButtonSmall:
+                text: "Save"
+                pos_hint: {'x': 0.78, 'y': 0.87}
+                size_hint: None, None
+                font_size: 12
+                size: 50, 32
+                on_release: root.save_piezo(piezo_alert_type.text, piezo_choice.text)
+            
+            Label:
+                text: "Lighting Config"
+                color: "white"
+                font_name: "fonts/Nexa Light.otf"
+                font_size: 20
+                pos_hint: {'x': 0.12, 'y': 0.78}
+                size_hint: None, None
+            Image:
+                source: 'imgs/led.png'
+                pos_hint: {'x': 0.46, 'y': 0.81}
+                size_hint: None, None
+                size: 35, 35
+            Spinner:
+                id: LED_alert_type
+                text: "Alert Type"
+                pos_hint: {'x': 0.05, 'y': 0.77}
+                size_hint: None, None
+                size: 160, 32
+                font_size: 12
+                option_cls: "MyOption"
+                values: ["Low Glucose", "High Glucose", "Loss of Therapy Protections", "No SG", "Manual Suspend", "Occlusion", "Low Insulin Reservoir", "Over-infusion", "Lost Controller", "Low Pump Battery", "Depleted Battery", "Critical Pump Error", "Simple Pump Notification", "Charging", "Pairing"]
+                on_text: root.alert_type_L_clicked(LED_alert_type.text)
+            Spinner:
+                id: LED_choice
+                text: "LED Mode"
+                pos_hint: {'x': 0.5, 'y': 0.77}
+                size_hint: None, None
+                size: 85, 32
+                font_size: 12
+                option_cls: "MyOption"
+                values: ["Breathe Up", "Breathe Down", "Breathe Regular", "Flash", "Solid"]
+                on_text: root.LED_spin_clicked(LED_choice.text)
+            Spinner:
+                id: LED_color_choice
+                text: "Color"
+                pos_hint: {'x': 0.75, 'y': 0.77}
+                size_hint: None, None
+                size: 40, 32
+                font_size: 12
+                option_cls: "MyOption"
+                values: ["R", "G", "B"]
+                on_text: root.LED_color_clicked(LED_color_choice.text)
+            HoverButtonSmall:
+                text: "Save"
+                pos_hint: {'x': 0.87, 'y': 0.77}
+                size_hint: None, None
+                font_size: 12
+                size: 40, 32
+                on_release: root.save_LED(LED_alert_type.text, LED_choice.text, LED_color_choice.text)
+            
+
+            Label:
+                text: "Test Alert"
+                color: "blue"
+                font_name: "fonts/Nexa Light.otf"
+                font_size: 20
+                pos_hint: {'x': 0.06, 'y': 0.68}
+                size_hint: None, None
+            Spinner:
+                id: alert_type_test
+                text: "Alert Type"
+                pos_hint: {'x': 0.05, 'y': 0.67}
+                size_hint: None, None
+                size: 160, 32
+                font_size: 12
+                option_cls: "MyOption"
+                values: ["Low Glucose", "High Glucose", "Loss of Therapy Protections", "No SG", "Manual Suspend", "Occlusion", "Low Insulin Reservoir", "Over-infusion", "Lost Controller", "Low Pump Battery", "Depleted Battery", "Critical Pump Error", "Simple Pump Notification", "Charging", "Pairing"]
+                on_text: root.alert_type_t_clicked(alert_type_test.text)
+            HoverButtonSmall:
+                text: "Test"
+                pos_hint: {'x': 0.5, 'y': 0.67}
+                size_hint: None, None
+                font_size: 12
+                size: 60, 32
+                on_release:
+                    root.test_button_pressed(alert_type_test.text)

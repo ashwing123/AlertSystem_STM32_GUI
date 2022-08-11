@@ -1,0 +1,42 @@
+<MyGridLayout>
+    name:name
+    age:age
+    food:food
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+        GridLayout:
+            cols:2
+            Label: 
+                text: "Name"
+            TextInput:
+                id: name
+                multiline: False
+
+            Label: 
+                text: "Age"
+            TextInput:
+                id: age
+                multiline: False
+
+            Label: 
+                text: "Food"
+            TextInput:
+                id: food
+                multiline: False
+
+            Button: 
+                id: LED_Button
+                height: 200
+                width: 200
+                text: "LED Settings"
+                font_size: 20
+                on_press: root.press()
+                background_normal: ''
+                background_color: (170/255, 85/255, 255/255, 1)
+                Image: 
+                    source: 'led.png'
+                    y: self.parent.y
+                    x: self.parent.x
+                    size: 150, 150
+
